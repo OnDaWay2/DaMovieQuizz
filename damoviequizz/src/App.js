@@ -1,15 +1,14 @@
-import React, { Component } from 'react'
+import React, { useState } from 'react';
+import Start from './components/Start.js';
 import Timer from './components/Timer.js';
-import './App.css';
+import "./App.css";
 
-class App extends Component {
-  render() {
+const App = () => {
   return (
     <div>
-      <Timer startCount={5}/>
+      <Start/>
+      <Timer/>
     </div>
   );
-  }
-}
-
+};
 export default App;
