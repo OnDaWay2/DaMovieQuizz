@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Start from './components/Start.js';
 import Timer from './components/Timer.js';
 import "./App.css";

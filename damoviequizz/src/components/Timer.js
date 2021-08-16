@@ -10,10 +10,10 @@ const Timer = () => {
     setIsActive(!isActive);
   }
 
-  function reset() {
-    setSeconds(60);
-    setIsActive(false);
-  }
+  // function reset() {
+  //   setSeconds(60);
+  //   setIsActive(false);
+  // }
 
   useEffect(() => {
     let interval = null;
