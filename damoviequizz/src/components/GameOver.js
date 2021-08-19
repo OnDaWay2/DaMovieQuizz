@@ -5,26 +5,23 @@ class GameOver extends Component {
     constructor (props) {
         super(props)
         this.state = {
-            gamePoint: 0
+            point: localStorage.getItem('point')
         }
     }
 
     render() {
-        const {gamePoint} = this.state
-        console.log('ALLO')
-        console.log(this.props.gamepoint)
+        console.log(this.props.point)
         return (
             <div>
-                <h1>Your score is : {gamePoint}</h1>
+                <h1>Your score is : {this.props.point}</h1>
             </div>
         )
     }
     componentDidMount () {
         const {getPoint} = this.props
         this.setState({
-          gamePoint: getPoint
+          point: localStorage.getItem('point')
         })
     }
 }
-// //                <button onClick={this.props.incrementItem}>Click {this.props.playerPoint}</button>
 export default GameOver

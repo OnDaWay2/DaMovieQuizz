@@ -16,14 +16,13 @@ const Start = () => {
 
     return (
         <div className="Wrapper">
-        <h1 className="Title">Your name is {title}</h1>
-        <form onSubmit={changeTitle}>
+          <h1 className="Title">Your name is {title}</h1>
+          <form onSubmit={changeTitle}>
             <div className="Input">
-            <input className="Input-text" id="input" name="inputText" onChange={handleChanges} type="text" value={inputText}/>
-            
-            <label htmlFor="input"/>
+              <input className="Input-text" id="input" name="inputText" onChange={handleChanges} type="text" value={inputText}/>
+              <label htmlFor="input"/>
             </div>
-        </form>
+          </form>
         </div>
     );
 };
