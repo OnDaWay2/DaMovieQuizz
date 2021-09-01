@@ -1,8 +1,13 @@
 import React, { useState, useEffect } from "react";
 import "./styles.css";
+import ButtonYes from './buttonComponent/ButtonYes';
+import ButtonNo from './buttonComponent/ButtonNo';
+import ButtonRefresh from './buttonComponent/ButtonRefresh';
+import '@fontsource/roboto';
+
 
 function Game() {
-  const API_KEY_MOVIE_DB = '7ea5f490261a949e52930517e1b4657c';
+
   const [page, setPage] = useState(1);
   const [point, setPoint] = useState(1);
   const [apiActorResponse, setApiActorResponse] = useState({profile_path: '' });
@@ -12,6 +17,10 @@ function Game() {
   const [errorMovie, setErrorMovie] = useState(null);
   const [randomActor, setRandomActor] = useState(parseInt(Math.random()));
   const [randomMovie, setRandomMovie] = useState(parseInt(Math.random()));
+  const API_KEY = process.env.REACT_APP_API_KEY;
+  const PERSON_KEY = process.env.REACT_APP_PERSON;
+  const MOVIE_KEY = process.env.REACT_APP_MOVIE;
+  const IMAGE_KEY = process.env.REACT_APP_IMAGE;
 
  
   function checkAnswerYes() {
@@ -31,13 +40,11 @@ function Game() {
   const loadCommitYes = () => {
     setPage(page + 1);
     setPoint(point + checkAnswerYes());
-    localStorage.setItem(`point`, point);
   };
 
   const loadCommitNo = () => {
     setPage(page + 1);
     setPoint(point + checkAnswerNo());
-    localStorage.setItem(`point`, point);
   };
   
   const refreshCommit = () => {
@@ -53,11 +60,10 @@ function Game() {
     };
 
       function fetchAnswerFunction() {
-      const answer = fetch(`https://api.themoviedb.org/3/person/${randomActor}/movie_credits?api_key=${API_KEY_MOVIE_DB}`, myInit)
+      const answer = fetch(`${PERSON_KEY}${randomActor}/movie_credits?api_key=${API_KEY}`, myInit)
       .then(res => res.json())
       .then(response => {
         setAnswerResponse(response.crew);
-        //localStorage.setItem(`Answer:${randomActor}`, JSON.stringify(response))
       }).catch(err => {
         setErrorActor(err.message);
       })
@@ -66,7 +72,7 @@ function Game() {
 
     function fetchPersonFunction() {
         setRandomActor(Math.floor(Math.random() * (400 - 1) + 1));
-        const actor = fetch(`https://api.themoviedb.org/3/person/${randomActor}?api_key=${API_KEY_MOVIE_DB}`, myInit)
+        const actor = fetch(`${PERSON_KEY}${randomActor}?api_key=${API_KEY}`, myInit)
         .then(res => {
           if (!res.ok)
             throw Error('could not fetch the data.')
@@ -80,9 +86,10 @@ function Game() {
       })
         
     }
+
     function fetchMovieFunction() {
       setRandomMovie(Math.floor(Math.random() * (400 - 1) + 1));
-        const movie = fetch(`https://api.themoviedb.org/3/movie/${randomMovie}?api_key=${API_KEY_MOVIE_DB}`, myInit)
+        const movie = fetch(`${MOVIE_KEY}${randomMovie}?api_key=${API_KEY}`, myInit)
         .then(res => {
           if (!res.ok || res.poster_path === null)
             throw Error('could not fetch the data.')
@@ -100,25 +107,25 @@ function Game() {
     fetchPersonFunction();
 }, [page]);
 
-
   return (
     <div>
         {apiActorResponse.profile_path !== null && apiMovieResponse.poster_path !== null}
         { !errorActor && !errorMovie ? 
-        <div>
-          <img className="photo" src={`https://image.tmdb.org/t/p/original`+apiActorResponse.profile_path} alt={apiActorResponse.name}/>
-          <img className="photo" src={`https://image.tmdb.org/t/p/original`+apiMovieResponse.poster_path} alt={apiMovieResponse.title}/> <br/>
-          <button className='buttonYes' onClick={loadCommitYes}>Oui</button>
-          <button className='buttonNo' onClick={loadCommitNo}>Non</button>
-        </div> : 
-        <div> 
-          { !errorActor || !errorMovie ?
           <div>
-            <p>could not fetch the data.</p>
+            <img className="photo" src={IMAGE_KEY+apiActorResponse.profile_path} alt={apiActorResponse.name}/>
+            <img className="photo" src={IMAGE_KEY+apiMovieResponse.poster_path} alt={apiMovieResponse.title}/> <br/>
+            <div onClick={loadCommitYes}><ButtonYes></ButtonYes></div>
+            <div onClick={loadCommitNo}><ButtonNo></ButtonNo></div>
+
           </div> : 
-          errorActor && errorMovie && errorMovie } <br/>
-          <button className='buttonRefresh' onClick={refreshCommit}>Refresh</button>
-        </div> 
+          <div> 
+            { !errorActor || !errorMovie ?
+            <div>
+              <p>could not fetch the data.</p>
+            </div> : 
+            errorActor && errorMovie && errorMovie } <br/>
+            <div onClick={refreshCommit}><ButtonRefresh></ButtonRefresh></div>
+          </div> 
         }
     </div>
   );

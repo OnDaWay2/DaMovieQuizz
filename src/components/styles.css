@@ -1,0 +1,12 @@
+.photo {
+    height: 150px;
+    width: 150px; 
+}
+
+img {
+    box-shadow:8px 8px 10px 0 rgba(0,0,0,0.5);
+}
+
+body {
+  font-family: "Roboto";
+}

@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import GameOver from './GameOver.js';
+import Button from '@material-ui/core/Button';
 import Game from './Game.js';
+import '@fontsource/roboto';
+
 
 const Timer = () => {
   const [seconds, setSeconds] = useState(60);
@@ -10,10 +13,10 @@ const Timer = () => {
     setIsActive(!isActive);
   }
 
-  // function reset() {
-  //   setSeconds(60);
-  //   setIsActive(false);
-  // }
+  function reset() {
+    setSeconds(60);
+    setIsActive(false);
+  }
 
   useEffect(() => {
     let interval = null;
@@ -34,9 +37,9 @@ const Timer = () => {
         {seconds}s
       </div>
       <div className="row">
-        <button className={`button button-primary button-primary-${isActive ? 'active' : 'inactive'}`} onClick={toggle}>
+        <Button variant="contained" color="primary" className={`button button-primary button-primary-${isActive ? 'active' : 'inactive'}`} onClick={toggle}>
           {isActive ? 'Pause' : 'Start'}
-        </button>
+        </Button>
         {isActive ? <Game/> : ''}
       </div>
     </div>

@@ -18,7 +18,6 @@ class GameOver extends Component {
         )
     }
     componentDidMount () {
-        const {getPoint} = this.props
         this.setState({
           point: localStorage.getItem('point')
         })
