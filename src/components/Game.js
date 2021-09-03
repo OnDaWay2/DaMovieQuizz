@@ -4,6 +4,7 @@ import ButtonYes from './buttonComponent/ButtonYes';
 import ButtonNo from './buttonComponent/ButtonNo';
 import ButtonRefresh from './buttonComponent/ButtonRefresh';
 import '@fontsource/roboto';
+import Helper from "../Helper/CallApi";
 
 
 function Game() {
@@ -17,9 +18,6 @@ function Game() {
   const [errorMovie, setErrorMovie] = useState(null);
   const [randomActor, setRandomActor] = useState(parseInt(Math.random()));
   const [randomMovie, setRandomMovie] = useState(parseInt(Math.random()));
-  const API_KEY = process.env.REACT_APP_API_KEY;
-  const PERSON_KEY = process.env.REACT_APP_PERSON;
-  const MOVIE_KEY = process.env.REACT_APP_MOVIE;
   const IMAGE_KEY = process.env.REACT_APP_IMAGE;
 
  
@@ -52,59 +50,17 @@ function Game() {
   };
   
   useEffect(() => {
-    
-    
     const myInit = {
       method: "GET",
       mode: "cors", 
     };
-
-      function fetchAnswerFunction() {
-      const answer = fetch(`${PERSON_KEY}${randomActor}/movie_credits?api_key=${API_KEY}`, myInit)
-      .then(res => res.json())
-      .then(response => {
-        setAnswerResponse(response.crew);
-      }).catch(err => {
-        setErrorActor(err.message);
-      })
-    }
-
-
-    function fetchPersonFunction() {
-        setRandomActor(Math.floor(Math.random() * (400 - 1) + 1));
-        const actor = fetch(`${PERSON_KEY}${randomActor}?api_key=${API_KEY}`, myInit)
-        .then(res => {
-          if (!res.ok)
-            throw Error('could not fetch the data.')
-          return res.json();
-        })
-        .then(response => {
-          setApiActorResponse(response);
-          setErrorActor(null);
-        }).catch(err => {
-          setErrorActor(err.message);
-      })
-        
-    }
-
-    function fetchMovieFunction() {
-      setRandomMovie(Math.floor(Math.random() * (400 - 1) + 1));
-        const movie = fetch(`${MOVIE_KEY}${randomMovie}?api_key=${API_KEY}`, myInit)
-        .then(res => {
-          if (!res.ok || res.poster_path === null)
-            throw Error('could not fetch the data.')
-          return res.json();
-        })
-        .then(response => {
-          setApiMovieResponse(response);  
-          setErrorMovie(null);
-          }).catch(err => {
-            setErrorMovie(err.message);
-        })
-    }
-    fetchAnswerFunction();
-    fetchMovieFunction();
-    fetchPersonFunction();
+    const Help = new Helper();
+    console.log(randomActor)
+    setRandomActor(Math.floor(Math.random() * (400 - 1) + 1));
+    setRandomMovie(Math.floor(Math.random() * (400 - 1) + 1));
+    Help.fetchAnswerFunction(randomActor);
+    console.log("1 + ",Help.fetchPersonFunction(randomActor));
+    console.log("2 + ",Help.fetchMovieFunction(randomMovie));
 }, [page]);
 
   return (
@@ -132,3 +88,48 @@ function Game() {
 }
 
 export default Game
+
+
+    //   function fetchAnswerFunction() {
+    //   const answer = fetch(`${PERSON_KEY}${randomActor}/movie_credits?api_key=${API_KEY}`, myInit)
+    //   .then(res => res.json())
+    //   .then(response => {
+    //     setAnswerResponse(response.crew);
+    //   }).catch(err => {
+    //     setErrorActor(err.message);
+    //   })
+    // }
+
+
+    // function fetchPersonFunction() {
+    //     setRandomActor(Math.floor(Math.random() * (400 - 1) + 1));
+    //     const actor = fetch(`${PERSON_KEY}${randomActor}?api_key=${API_KEY}`, myInit)
+    //     .then(res => {
+    //       if (!res.ok)
+    //         throw Error('could not fetch the data.')
+    //       return res.json();
+    //     })
+    //     .then(response => {
+    //       setApiActorResponse(response);
+    //       setErrorActor(null);
+    //     }).catch(err => {
+    //       setErrorActor(err.message);
+    //   })
+        
+    // }
+
+    // function fetchMovieFunction() {
+    //   setRandomMovie(Math.floor(Math.random() * (400 - 1) + 1));
+    //     const movie = fetch(`${MOVIE_KEY}${randomMovie}?api_key=${API_KEY}`, myInit)
+    //     .then(res => {
+    //       if (!res.ok || res.poster_path === null)
+    //         throw Error('could not fetch the data.')
+    //       return res.json();
+    //     })
+    //     .then(response => {
+    //       setApiMovieResponse(response);  
+    //       setErrorMovie(null);
+    //       }).catch(err => {
+    //         setErrorMovie(err.message);
+    //     })
+    // }
