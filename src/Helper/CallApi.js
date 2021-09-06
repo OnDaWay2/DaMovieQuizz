@@ -9,11 +9,18 @@ class Helper extends React.Component {
   constructor() {
     super()
     this.state = {
-      answer: "",
-      actorAnswer: "",
-      movieAnswer: ""
+      answer: [],
+      actorAnswer: {},
+      movieAnswer: {poster_path: ''},
+      errorMess: "",
+      myInit: {method: "GET", mode: "cors"}
     }
   }
+
+componentDidMount(randomActor) {
+  this.fetchMovieFunction(randomActor);
+  this.fetchPersonFunction(randomActor);
+}
 
   setAnswer = (response) => {
     this.setState({ answer: response});
@@ -25,42 +32,51 @@ class Helper extends React.Component {
 
   setMovieResponse = (response) => {
     this.setState({ movieAnswer: response});
+    console.log("get SET ? ",this.state.movieAnswer)
+  }
+
+  setErrorActor = (err) => {
+    this.setState({errorMess: err})
   }
 
   fetchAnswerFunction = (randomActor) => {
-    let myInit = {
-      method: "GET",
-      mode: "cors",
-    };
-    fetch(`${PERSON_KEY}${randomActor}/movie_credits?api_key=${API_KEY}`, myInit)
+    let data = this.state.movieAnswer;
+    fetch(`${PERSON_KEY}${randomActor}/credits?api_key=${API_KEY}`, this.myInit)
       .then(res => res.json())
-        .then(response => {this.setAnswer(response)})
+        .then(response => {
+          this.setAnswer(response.crew)
+        })
+        let i=0;
+        for (i=0; i < data.length; i++) {
+          if (data[i].id === randomActor) {
+            return 1;
+          }
+          i++;
+        }
+    return 0;
   }
 
   fetchPersonFunction = (randomActor) => {
-    let myInit = {
-      method: "GET",
-      mode: "cors",
-    };
-    fetch(`${PERSON_KEY}${randomActor}?api_key=${API_KEY}`, myInit)
+    fetch(`${PERSON_KEY}${randomActor}?api_key=${API_KEY}`, this.myInit)
     .then(res => {
       return res.json();
       })
       .then(response => {this.setActorResponse(response.total)})
-    return (this.actorAnswer)
+    return (this.state.actorAnswer)
   }
 
     fetchMovieFunction = (randomMovie) => {
-      let myInit = {
-        method: "GET",
-        mode: "cors"
-      };
-      fetch(`${MOVIE_KEY}${randomMovie}?api_key=${API_KEY}`, myInit)
+      fetch(`${MOVIE_KEY}${randomMovie}?api_key=${API_KEY}`, this.myInit)
       .then(res => {
         return res.json();
+      })
+      .then(response => {
+        this.setMovieResponse(response)
+        console.log(response)
+      }).catch(err => {
+          this.setErrorActor(err.message);
         })
-        .then(response => {this.setMovieResponse(response.total)}) 
-      return (this.movieAnswer)
+      return (this.state.movieAnswer)
     }
 }
 export default Helper

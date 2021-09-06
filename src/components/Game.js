@@ -16,8 +16,8 @@ function Game() {
   const [apiAnswerResponse, setAnswerResponse] = useState({id: '0'});
   const [errorActor, setErrorActor] = useState(null);
   const [errorMovie, setErrorMovie] = useState(null);
-  const [randomActor, setRandomActor] = useState(parseInt(Math.random()));
-  const [randomMovie, setRandomMovie] = useState(parseInt(Math.random()));
+  const [randomActor, setRandomActor] = useState(Math.floor(Math.random() * (400 - 1) + 1));
+  const [randomMovie, setRandomMovie] = useState(Math.floor(Math.random() * (400 - 1) + 1));
   const IMAGE_KEY = process.env.REACT_APP_IMAGE;
 
  
@@ -54,15 +54,13 @@ function Game() {
       method: "GET",
       mode: "cors", 
     };
-    const Help = new Helper();
-    console.log(randomActor)
     setRandomActor(Math.floor(Math.random() * (400 - 1) + 1));
     setRandomMovie(Math.floor(Math.random() * (400 - 1) + 1));
-    Help.fetchAnswerFunction(randomActor);
-    console.log("1 + ",Help.fetchPersonFunction(randomActor));
-    console.log("2 + ",Help.fetchMovieFunction(randomMovie));
+    let Help = new Helper(randomActor);
+    console.log("MOVIE res = ",Help.fetchMovieFunction(randomMovie));
+    console.log("ACTOR  res = ",Help.fetchPersonFunction(randomActor));
+    console.log("_______________________")
 }, [page]);
-
   return (
     <div>
         {apiActorResponse.profile_path !== null && apiMovieResponse.poster_path !== null}
