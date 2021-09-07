@@ -11,9 +11,9 @@ class Helper extends React.Component {
     this.state = {
       answer: [],
       actorAnswer: {},
-      movieAnswer: {poster_path: ''},
+      movieAnswer: {},
       errorMess: "",
-      myInit: {method: "GET", mode: "cors"}
+      myInit: { method: "GET", mode: "cors" }
     }
   }
 
@@ -32,28 +32,45 @@ componentDidMount(randomActor) {
 
   setMovieResponse = (response) => {
     this.setState({ movieAnswer: response});
-    console.log("get SET ? ",this.state.movieAnswer)
+    console.log("IS SET = ",this.state.movieAnswer)
   }
 
   setErrorActor = (err) => {
     this.setState({errorMess: err})
   }
 
-  fetchAnswerFunction = (randomActor) => {
-    let data = this.state.movieAnswer;
-    fetch(`${PERSON_KEY}${randomActor}/credits?api_key=${API_KEY}`, this.myInit)
-      .then(res => res.json())
-        .then(response => {
-          this.setAnswer(response.crew)
-        })
-        let i=0;
-        for (i=0; i < data.length; i++) {
+  fetchAnswerFunction = (randomMovie, randomActor) => {
+    fetch(`${PERSON_KEY}${randomMovie}/credits?api_key=${API_KEY}`, this.myInit)
+    .then(res => res.json())
+    .then(response => {
+      this.setAnswer(response.crew)
+    })
+    .catch(err => {
+      this.setErrorActor(err.message);
+    })
+    let data = this.state.answer;
+        for (let i=0; i < data.length; i++) {
           if (data[i].id === randomActor) {
             return 1;
           }
-          i++;
         }
-    return 0;
+        return 0;
+  }
+
+  fetchCalculateActor = (randomMovie) => {
+    fetch(`${PERSON_KEY}${randomMovie}/credits?api_key=${API_KEY}`, this.myInit)
+    .then(res => res.json())
+    .then(response => {
+      this.setAnswer(response.crew)
+    }).catch(err => {
+      this.setErrorActor(err.message);
+    })
+    let data = this.state.answer;
+    let random = Math.floor(Math.random() * (100 - 1) + 1);
+    while (random >= data.length) {
+      random = Math.floor(Math.random() * (100 - 1) + 1);
+    }
+    return(this.fetchPersonFunction(Math.floor(data[random].id)));
   }
 
   fetchPersonFunction = (randomActor) => {
@@ -61,22 +78,27 @@ componentDidMount(randomActor) {
     .then(res => {
       return res.json();
       })
-      .then(response => {this.setActorResponse(response.total)})
+      .then(response => {this.setActorResponse(response)
+      })
+      .catch(err => {
+        this.setErrorActor(err.message);
+      })
     return (this.state.actorAnswer)
   }
 
-    fetchMovieFunction = (randomMovie) => {
-      fetch(`${MOVIE_KEY}${randomMovie}?api_key=${API_KEY}`, this.myInit)
-      .then(res => {
-        return res.json();
+  fetchMovieFunction = (randomMovie) => {
+    fetch(`${MOVIE_KEY}${randomMovie}?api_key=${API_KEY}`, this.myInit)
+    .then(res => {
+      return res.json();
+    })
+    .then(response => {
+      this.setMovieResponse(response)
+      console.log(response)
+    })
+    .catch(err => {
+        this.setErrorActor(err.message);
       })
-      .then(response => {
-        this.setMovieResponse(response)
-        console.log(response)
-      }).catch(err => {
-          this.setErrorActor(err.message);
-        })
-      return (this.state.movieAnswer)
-    }
+    return (this.state.movieAnswer)
+  }
 }
 export default Helper
