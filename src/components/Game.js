@@ -4,22 +4,20 @@ import ButtonYes from './buttonComponent/ButtonYes';
 import ButtonNo from './buttonComponent/ButtonNo';
 import ButtonRefresh from './buttonComponent/ButtonRefresh';
 import '@fontsource/roboto';
+import Helper from "../Helper/CallApi";
 
 
 function Game() {
 
   const [page, setPage] = useState(1);
-  const [point, setPoint] = useState(1);
+  const [point, setPoint] = useState(0);
   const [apiActorResponse, setApiActorResponse] = useState({profile_path: '' });
   const [apiMovieResponse, setApiMovieResponse] = useState({poster_path: ''});
   const [apiAnswerResponse, setAnswerResponse] = useState({id: '0'});
   const [errorActor, setErrorActor] = useState(null);
   const [errorMovie, setErrorMovie] = useState(null);
-  const [randomActor, setRandomActor] = useState(parseInt(Math.random()));
-  const [randomMovie, setRandomMovie] = useState(parseInt(Math.random()));
-  const API_KEY = process.env.REACT_APP_API_KEY;
-  const PERSON_KEY = process.env.REACT_APP_PERSON;
-  const MOVIE_KEY = process.env.REACT_APP_MOVIE;
+  const [randomActor, setRandomActor] = useState(Math.floor(Math.random() * (400 - 1) + 1));
+  const [randomMovie, setRandomMovie] = useState(Math.floor(Math.random() * (400 - 1) + 1));
   const IMAGE_KEY = process.env.REACT_APP_IMAGE;
 
  
@@ -52,60 +50,19 @@ function Game() {
   };
   
   useEffect(() => {
+    let randomPick = 1; //Math.floor(Math.random() * (500 - 1) + 1)
+    let Help = new Helper(randomActor);
     
-    
-    const myInit = {
-      method: "GET",
-      mode: "cors", 
-    };
-
-      function fetchAnswerFunction() {
-      const answer = fetch(`${PERSON_KEY}${randomActor}/movie_credits?api_key=${API_KEY}`, myInit)
-      .then(res => res.json())
-      .then(response => {
-        setAnswerResponse(response.crew);
-      }).catch(err => {
-        setErrorActor(err.message);
-      })
+    setRandomActor(Math.floor(Math.random() * (500 - 1) + 1));
+    setRandomMovie(Math.floor(Math.random() * (500 - 1) + 1));
+    console.log("MOVIE res = ",Help.fetchMovieFunction(randomMovie));
+    if (randomPick % 2 === 0) {
+      Help.fetchCalculateActor(randomMovie);
+    } else {
+      console.log("ACTOR  res = ",Help.fetchPersonFunction(randomActor));
     }
-
-
-    function fetchPersonFunction() {
-        setRandomActor(Math.floor(Math.random() * (400 - 1) + 1));
-        const actor = fetch(`${PERSON_KEY}${randomActor}?api_key=${API_KEY}`, myInit)
-        .then(res => {
-          if (!res.ok)
-            throw Error('could not fetch the data.')
-          return res.json();
-        })
-        .then(response => {
-          setApiActorResponse(response);
-          setErrorActor(null);
-        }).catch(err => {
-          setErrorActor(err.message);
-      })
-        
-    }
-
-    function fetchMovieFunction() {
-      setRandomMovie(Math.floor(Math.random() * (400 - 1) + 1));
-        const movie = fetch(`${MOVIE_KEY}${randomMovie}?api_key=${API_KEY}`, myInit)
-        .then(res => {
-          if (!res.ok || res.poster_path === null)
-            throw Error('could not fetch the data.')
-          return res.json();
-        })
-        .then(response => {
-          setApiMovieResponse(response);  
-          setErrorMovie(null);
-          }).catch(err => {
-            setErrorMovie(err.message);
-        })
-    }
-    fetchAnswerFunction();
-    fetchMovieFunction();
-    fetchPersonFunction();
-}, [page]);
+    setPoint(Help.fetchAnswerFunction(randomMovie, randomActor) + point);
+  }, [page]);
 
   return (
     <div>
